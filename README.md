@@ -33,9 +33,9 @@ The project solely relies on the NumPy library for numerical computations. No ex
 
 ## Training Results
 ##### Generative Adversarial Network - 75 epochs.
-![GAN Training](readme_files\gan_training.gif)
+![GAN Training](readme_files/gan_training.gif)
 ##### Classifier - 40 epochs.
-![Classifier Training](readme_files\classifier_training.png)
+![Classifier Training](readme_files/classifier_training.png)
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
