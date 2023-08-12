@@ -57,7 +57,7 @@ model = Classifier(input_size=784, output_size=10, learning_rate=lr)
 # Training
 n_batches = train_x.shape[0] // batch_size
 for epoch in range(epochs):
-   #print(f"Epoch {epoch}/{epochs}")
+   print(f"Epoch {epoch}/{epochs}")
    t_loss = v_loss = t_acc = v_acc = 0
 
    for batch in range(0, n_batches):
@@ -101,8 +101,7 @@ for epoch in range(epochs):
       v_acc = (1-alpha)*v_acc + alpha*val_accuracy
 
 
-      #print(f"batch: {batch}/{n_batches}  {t_loss = :.3f}  {t_acc = :.2%}  {v_loss = :.3f}  {v_acc = :.2%}", end="\r")
-   if epoch%8==0 or epoch==39:
-     # print(f"batch: {n_batches}/{n_batches}  {t_loss = :.3f}  {t_acc = :.2%}  {v_loss = :.3f}  {v_acc = :.2%}   ")
-      print(f"epoch: {epoch}  {t_loss = :.3f}  {t_acc = :.2%}  {v_loss = :.3f}  {v_acc = :.2%}   ")
+      print(f"batch: {batch}/{n_batches}  {t_loss = :.3f}  {t_acc = :.2%}  {v_loss = :.3f}  {v_acc = :.2%}", end="\r")
+
+   print(f"epoch: {epoch}  {t_loss = :.3f}  {t_acc = :.2%}  {v_loss = :.3f}  {v_acc = :.2%}   ")
 
