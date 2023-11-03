@@ -29,7 +29,7 @@ class Classifier:
 
 def show_from_file(model, file="test.png"):
    """Shows prediction on custom image."""
-   image = cv2.imread(file) # I used paint to generate new data 
+   image = cv2.imread(file) # I used paint to generate new samples 
    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
    
    inputs = image.reshape((1, 784))
@@ -54,15 +54,15 @@ def show_from_dataset(model, x_test):
       plt.show()
 
 
-def evaluate(model, X_test, y_test, batch_size):
-   """Evaluates model on all training dataset"""
+def evaluate(model, X_val, y_val, batch_size):
+   """Evaluates model on all validation dataset"""
    val_loss = 0
    val_accuracy = 0
 
-   n_batches = X_test.shape[0]//batch_size
+   n_batches = X_val.shape[0]//batch_size
    for i in range(n_batches):
-      val_x = X_test[i*batch_size: (i+1)*batch_size]
-      val_y = y_test[i*batch_size: (i+1)*batch_size]
+      val_x = X_val[i*batch_size: (i+1)*batch_size]
+      val_y = y_val[i*batch_size: (i+1)*batch_size]
       val_y_hot = one_hot_encoder(val_y, 10)
 
       val_output_hot = model(val_x)
@@ -88,14 +88,14 @@ def one_hot_encoder(data, n_classes):
 # Load Data
 mndata = MNIST('MNIST')
 train_x, train_y = mndata.load_training()
-test_x, test_y = mndata.load_testing()
+val_x, val_y = mndata.load_testing()
 
 
 train_x = 2*np.array(train_x)/255 - 1
 train_y = np.array(train_y)
 
-test_x = 2*np.array(test_x)/255 - 1
-test_y = np.array(test_y)
+val_x = 2*np.array(val_x)/255 - 1
+val_y = np.array(val_y)
 
 train_y = one_hot_encoder(train_y, 10)
 
@@ -140,8 +140,9 @@ for epoch in range(epochs):
 
       print(f"batch: {batch}/{n_batches}  {t_loss = :.3f}  {t_acc = :.2%}", end="\r")
 
-   # show_from_file(model)
+   ### Visualize ###
+   # show_from_file(model, file="test.png")
    # show_from_dataset(model, test_x)
      
-   v_loss, v_acc = evaluate(model, test_x, test_y, batch_size)
+   v_loss, v_acc = evaluate(model, val_x, val_y, batch_size)
    print(f"epoch: {epoch}  {t_loss = :.3f}  {t_acc = :.2%}  {v_loss = :.3f}  {v_acc = :.2%}   ")
