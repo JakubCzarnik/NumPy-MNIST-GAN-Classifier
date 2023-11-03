@@ -2,6 +2,8 @@ import numpy as np
 from learning.tensor import Tensor, GradientTape
 from learning.layer import Dense
 from mnist import MNIST
+import matplotlib.pyplot as plt
+import cv2
 
 
 class Classifier:
@@ -25,6 +27,57 @@ class Classifier:
       self.layer2.update_parameters(self.learning_rate)
 
 
+def show_from_file(model, file="test.png"):
+   """Shows prediction on custom image."""
+   image = cv2.imread(file) # I used paint to generate new data 
+   image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+   
+   inputs = image.reshape((1, 784))
+   output = model(inputs)
+
+
+   idx = np.argmax(output, axis=1)[0]
+   print(f"Number: {idx}, confident: {output[0][idx]*100:.2f}%")
+   plt.imshow(image, cmap="hot")
+   plt.show()
+
+
+def show_from_dataset(model, x_test):
+   import matplotlib.pyplot as plt
+   output = model(x_test[0:5])
+   images = x_test[0:5].reshape((5, 28,28))
+   for i, img in enumerate(images):
+      plt.imshow(img, cmap="hot")
+      idx = np.argmax(output[i], axis=0)
+      print(f"Number: {idx}, confident: {output[i][idx]*100:.2f}%")
+      print(np.round(output[i]*100,3))
+      plt.show()
+
+
+def evaluate(model, X_test, y_test, batch_size):
+   """Evaluates model on all training dataset"""
+   val_loss = 0
+   val_accuracy = 0
+
+   n_batches = X_test.shape[0]//batch_size
+   for i in range(n_batches):
+      val_x = X_test[i*batch_size: (i+1)*batch_size]
+      val_y = y_test[i*batch_size: (i+1)*batch_size]
+      val_y_hot = one_hot_encoder(val_y, 10)
+
+      val_output_hot = model(val_x)
+      val_output = np.argmax(val_output_hot, axis=1)
+
+      loss = ((val_y_hot - val_output_hot)**2).sum()
+      accuracy = np.mean(np.where(val_output==val_y, 1, 0))
+
+      # calculate mean
+      alpha = 1/(i+1) if i != 0 else 1
+
+      val_loss = (1-alpha)*val_loss + alpha*loss
+      val_accuracy = (1-alpha)*val_accuracy + alpha*accuracy
+   return val_loss, val_accuracy
+
 
 def one_hot_encoder(data, n_classes):
    one_hot_encoded = np.zeros((len(data), n_classes))
@@ -47,12 +100,13 @@ test_y = np.array(test_y)
 train_y = one_hot_encoder(train_y, 10)
 
 # Hyperparameters
-epochs = 40
-lr = 0.005
+epochs = 301
+lr = 0.01
 batch_size = 50
 
 
 model = Classifier(input_size=784, output_size=10, learning_rate=lr)
+
 
 # Training
 n_batches = train_x.shape[0] // batch_size
@@ -79,29 +133,15 @@ for epoch in range(epochs):
       batch_y = np.argmax(batch_y, axis=1)
       train_accuracy = np.mean(np.where(output==batch_y, 1, 0))
 
-      # Calculate Validation Metrics
-      idx = np.random.choice(test_x.shape[0]//n_batches-1, 1)[0]
-      val_x = test_x[idx*batch_size: (idx+1)*batch_size]
-      val_y = test_y[idx*batch_size: (idx+1)*batch_size]
-      val_y_hot = one_hot_encoder(val_y, 10)
-
-      val_output_hot = model(val_x)
-      val_output = np.argmax(val_output_hot, axis=1)
-
-      val_loss = ((val_y_hot - val_output_hot)**2).sum()
-      val_accuracy = np.mean(np.where(val_output==val_y, 1, 0))
-
-      # Update Displayed Metrics
-      alpha = 1/(batch+1)
+      alpha = 1/(batch+1) if batch != 0 else 1
 
       t_loss = (1-alpha)*t_loss + alpha*loss
-      v_loss = (1-alpha)*v_loss + alpha*val_loss
-
       t_acc = (1-alpha)*t_acc + alpha*train_accuracy
-      v_acc = (1-alpha)*v_acc + alpha*val_accuracy
 
+      print(f"batch: {batch}/{n_batches}  {t_loss = :.3f}  {t_acc = :.2%}", end="\r")
 
-      print(f"batch: {batch}/{n_batches}  {t_loss = :.3f}  {t_acc = :.2%}  {v_loss = :.3f}  {v_acc = :.2%}", end="\r")
-
+   # show_from_file(model)
+   # show_from_dataset(model, test_x)
+     
+   v_loss, v_acc = evaluate(model, test_x, test_y, batch_size)
    print(f"epoch: {epoch}  {t_loss = :.3f}  {t_acc = :.2%}  {v_loss = :.3f}  {v_acc = :.2%}   ")
-
