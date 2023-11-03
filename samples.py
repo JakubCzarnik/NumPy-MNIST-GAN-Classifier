@@ -17,6 +17,7 @@ with GradientTape():
 
 
 d.backward()
+d.backward()
 print(f"{x.grad = :.1f}") # d/dx [(x*y)**2] = 2(x*y)*y = 96.
 print(f"{y.grad = :.1f}") # d/dy [(x*y)**2] = 2(x*y)*x = 72.
 print(f"{c.grad = :.1f}") # d/dc [c**2]     = 2(c)     = 24.
