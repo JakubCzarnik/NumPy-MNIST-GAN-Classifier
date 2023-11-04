@@ -28,7 +28,7 @@ class Dense(Layer):
       self.activation = activation
 
       if kernel_initializer is None: 
-         w = np.random.uniform(-0.1, 0.1, (self.input_size, self.output_size))
+         w = np.random.uniform(-0.01, 0.01, (self.input_size, self.output_size))
          self.weights = Tensor(w, weight=True, is_watched=True)
 
       elif isinstance(kernel_initializer, Tensor):

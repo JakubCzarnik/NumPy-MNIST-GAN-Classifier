@@ -5,15 +5,14 @@ from mnist import MNIST
 import matplotlib.pyplot as plt
 import cv2
 
-
 class Classifier:
    def __init__(self, input_size, output_size, learning_rate=0.005):
       self.input_size = input_size
       self.output_size = output_size
       self.learning_rate = learning_rate
 
-      self.layer1 = Dense(input_size, 100, activation="sigmoid")
-      self.layer2 = Dense(100, output_size, activation="sigmoid")
+      self.layer1 = Dense(input_size, 392, activation="sigmoid")
+      self.layer2 = Dense(392, output_size, activation="sigmoid")
 
 
    def __call__(self, inputs):
@@ -100,7 +99,7 @@ val_y = np.array(val_y)
 train_y = one_hot_encoder(train_y, 10)
 
 # Hyperparameters
-epochs = 301
+epochs = 5000
 lr = 0.01
 batch_size = 50
 
@@ -140,6 +139,8 @@ for epoch in range(epochs):
 
       print(f"batch: {batch}/{n_batches}  {t_loss = :.3f}  {t_acc = :.2%}", end="\r")
 
+   if epoch==200:
+      model.learning_rate /= 2
    ### Visualize ###
    # show_from_file(model, file="test.png")
    # show_from_dataset(model, test_x)

@@ -37,7 +37,7 @@ Despite the use of dense layers instead of CNNs and the lack of regularization, 
 
 ![GAN Training](readme_files/gan_training.gif)
 ##### Classifier - 300 epochs.
-The model was evaluated on the entire validation dataset (10,000 images) at each epoch. In the 230 epoch, the model achieved an incredible 97.7% accuracy on validation data, after which it began to overfit. Which is a bit surprising because I used sigmoid activation instead of popular softmax in multiclass classification problem.
+The model was evaluated on the entire validation dataset (10,000 images) at each epoch. In the 230 epoch, the model achieved an incredible 98.3% accuracy on validation data. Which is a bit surprising because I used sigmoid activation instead of popular softmax in multiclass classification problem.
 
 ![Classifier Training](readme_files/classifier.png)
 ## License
