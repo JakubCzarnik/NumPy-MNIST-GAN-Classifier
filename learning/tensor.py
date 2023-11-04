@@ -15,7 +15,7 @@ class Tensor(np.ndarray):
 
    def __new__(cls,
                input_array, 
-               dtype=np.float32, 
+               dtype=np.float64, 
                is_watched=False,
                local_gradients=(),
                weight=False):
@@ -59,7 +59,7 @@ class Tensor(np.ndarray):
 
             grad_out = np.dot(path_value, child_var.T)
             gradient._backward(grad_out)
-
+     
 
    def to_numpy(self):
       return np.copy(self)
@@ -250,7 +250,7 @@ class Tensor(np.ndarray):
    
    def mean(self, *args, **kwargs):
       x = self.to_numpy()
-      result =  np.mean(x, *args, **kwargs)
+      result = np.mean(x, *args, **kwargs)
 
       if not (self._inscope and self._watched):
          return Tensor(result)

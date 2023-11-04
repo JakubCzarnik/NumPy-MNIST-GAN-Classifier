@@ -32,11 +32,11 @@ Adjust hyperparameters and settings in the respective scripts to experiment with
 The project solely relies on the NumPy library for numerical computations. No external deep learning frameworks are used.
 
 ## Training Results
-##### Generative Adversarial Network - 75 epochs.
+##### Generative Adversarial Network .
 Despite the use of dense layers instead of CNNs and the lack of regularization, you can see clear numbers at the end. I also noticed during the training that the model tends to mode colappse, generating more and more ones, which basically seems like a logical decision since it is the simplest number to generate.
 
 ![GAN Training](readme_files/gan_training.gif)
-##### Classifier - 300 epochs.
+##### Classifier.
 The model was evaluated on the entire validation dataset (10,000 images) at each epoch. In the 230 epoch, the model achieved an incredible 98.3% accuracy on validation data. Which is a bit surprising because I used sigmoid activation instead of popular softmax in multiclass classification problem.
 
 ![Classifier Training](readme_files/classifier.png)

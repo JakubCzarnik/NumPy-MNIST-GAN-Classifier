@@ -89,7 +89,6 @@ mndata = MNIST('MNIST')
 train_x, train_y = mndata.load_training()
 val_x, val_y = mndata.load_testing()
 
-
 train_x = 2*np.array(train_x)/255 - 1
 train_y = np.array(train_y)
 
@@ -99,7 +98,7 @@ val_y = np.array(val_y)
 train_y = one_hot_encoder(train_y, 10)
 
 # Hyperparameters
-epochs = 5000
+epochs = 1000
 lr = 0.01
 batch_size = 50
 
