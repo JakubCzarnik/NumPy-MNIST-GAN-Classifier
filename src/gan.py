@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from learning.tensor import Tensor, GradientTape
 from learning.layer import Dense
-from mnist import MNIST
+from utils import load_data_gan
 
 
 class Generator:
@@ -49,13 +49,6 @@ class Discriminator:
       self.layer3.update_parameters(self.learning_rate)
 
 
-# Load Data
-mndata = MNIST('MNIST')
-train_x, _ = mndata.load_training()
-train_x = 2*np.array(train_x)/255 - 1
-
-
-samples_folder = "image_samples"
 
 # Hyperparameters
 lat_dim = 100
@@ -64,23 +57,28 @@ batch_size = 100
 g_lr = 0.0003
 d_lr = 0.0003
 
+samples_folder = "image_samples"
+plot_size = (10, 10)
 
+
+X_train = load_data_gan()
 generator = Generator(input_size=lat_dim,
-                      output_size=train_x.shape[1], 
+                      output_size=X_train.shape[1], 
                       learning_rate=g_lr)
 
-discriminator = Discriminator(input_size=train_x.shape[1], 
+discriminator = Discriminator(input_size=X_train.shape[1], 
                               output_size=1, 
                               learning_rate=d_lr)
 
-# Generate Static Data
+# Generate Static Data for visualization
+size = plot_size[0]*plot_size[1]
 ones = np.ones(shape=(batch_size, 1))
 zeros =  np.zeros(shape=(batch_size, 1))
-sample_noise = np.random.uniform(low=-1, high=1, size=(batch_size, lat_dim))
+sample_noise = np.random.uniform(low=-1, high=1, size=(size, lat_dim))
 
 
 # Training
-n_batches = (train_x.shape[0] // batch_size)
+n_batches = (X_train.shape[0] // batch_size)
 for epoch in range(epochs):
    print(f"Epoch {epoch}/{epochs}")
 
@@ -90,7 +88,7 @@ for epoch in range(epochs):
       noise = np.random.uniform(low=-1, 
                                 high=1, 
                                 size=(batch_size, lat_dim))
-      true_img = train_x[batch*batch_size: (batch+1)*batch_size]
+      true_img = X_train[batch*batch_size: (batch+1)*batch_size]
 
       noise, true_img = Tensor(noise), Tensor(true_img)
       with GradientTape():
@@ -129,15 +127,17 @@ for epoch in range(epochs):
 
    # Decrease Learning Rate After 3 Epochs
    if epoch == 2:
-      generator.learning_rate *=  0.8
       discriminator.learning_rate *= 0.5
+
+   #if epoch == 4:
+      #generator.learning_rate *=  0.7
 
    # Save Samples
    if epoch%5 == 0:
       imgs = generator(sample_noise)
 
       selected_indices = range(len(imgs))
-      fig, axes = plt.subplots(10, 10, figsize=(28, 28))
+      fig, axes = plt.subplots(*plot_size, figsize=(28, 28))
       fig.subplots_adjust(hspace=0, wspace=0)
 
       for j, ax in enumerate(axes.flat):
